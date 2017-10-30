@@ -13,15 +13,18 @@
     </div>
 
     <!-- AudioWM.js -->
-    <script src="./src/AudioMarkings.js" type="text/javascript"></script>
-    <script src="./src/Receiver.js" type="text/javascript"></script>
+    <script src="../../src/AudioMarkings.js" type="text/javascript"></script>
+    <script src="../../src/Emitter.js" type="text/javascript"></script>
 
     <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
 
     <div>
-      <p>Messages</p>
+      <p>Message</p>
+      <input type="text" id="data" value="00000000" required pattern="[0-1]{8}">
+      <input type="button" value="Emit">
+      <p> Is Emitting</p>
+      <div id='message'></div>
     </div>
-    <div id="results"></div>
 
     <script type="text/javascript">    
       (function() {
@@ -31,32 +34,19 @@
         }
         
         const context = (new AudioMarkings()).context,
-              receiver = new Receiver(
-                          () => console.log('Receiver ready'),
-                          (err) => console.error(err),
-                          context)
+              emitter = new Emitter(context)
 
-        const showResults = function(results) {
-          document.getElementById('results').innerHTML = ''
-          //TODO::
-          if(results) {
-
-          }
-        }
-
-        const onChangeMessage = function(message) {
-          //Deal with message
-        }
-        
+        emitter.start()
 
         let data = document.getElementById('data')
-
 
         let emitBtn = document.querySelector('input[type="button"]')
         emitBtn.onclick = function() {
           if(data.validity.valid){
             const value = parseInt(data.value, 2)
             console.log(`Emitting... ${value}`)
+            $('#message').empty()
+            $('#message').html(`${value}`) 
 
             emitter.setMessage(value)
           }else{
