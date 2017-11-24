@@ -49,12 +49,12 @@
         }
 
         let progress = timestamp - start
-        // console.log('receiver.checkMessage() = ', receiver.checkMessage())
+        console.log('receiver.lastMessage = ', receiver.lastMessage)
         length += 1
-        if(messages[receiver.checkMessage()] == null)
-          messages[receiver.checkMessage()] = 0
+        if(messages[receiver.lastMessage] == null)
+          messages[receiver.lastMessage] = 0
 
-        messages[receiver.checkMessage()] += 1
+        messages[receiver.lastMessage] += 1
 
         if(progress < 5000)
           window.requestAnimationFrame(checkMessage)
@@ -109,6 +109,8 @@
         receiver = new Receiver(() => console.log('Receiver ready'),
           (err) => console.error(err),
           context)
+
+        // receiver.onChangeMessage = (value) => {console.log(value)}
       })
     </script>
 
