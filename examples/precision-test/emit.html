@@ -34,7 +34,7 @@
         }
         
         const context = (new AudioMarkings()).context,
-              emitter = new Emitter(context)
+              emitter = new Emitter(context, { disableNormalization: false })
 
         emitter.start()
 

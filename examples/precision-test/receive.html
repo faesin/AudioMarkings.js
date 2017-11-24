@@ -50,11 +50,23 @@
 
         let progress = timestamp - start
         console.log('receiver.lastMessage = ', receiver.lastMessage)
-        length += 1
-        if(messages[receiver.lastMessage] == null)
-          messages[receiver.lastMessage] = 0
 
+        if(messages.positive == null || messages.negative == null ) {
+          messages.positive = 0
+          messages.negative = 0
+        }
+
+        length += 1
+
+        if(messages[receiver.lastMessage] == null) {
+          messages[receiver.lastMessage] = 0;
+        }
+        
         messages[receiver.lastMessage] += 1
+
+        let avgs = receiver.getIntensityValues(receiver.referencePositive, receiver.referenceNegative)
+        messages.positive += avgs[0]
+        messages.negative += avgs[1]
 
         if(progress < 5000)
           window.requestAnimationFrame(checkMessage)
@@ -77,22 +89,22 @@
       const showResult = function(result) {
         $('#result').empty()
         console.log('result', result)
-        if(result) {
-          if (result['NaN'] != null) {
-            length -= result['NaN'];
+        
+        if( result ) {
+          if( result['NaN'] != null ) {
+            length -= result['NaN']['iterations'];
             delete result['NaN'];
           }
 
-          let message = ''
-          for (let key of Object.keys(result)) {
-            let res
-            if(Number.isNaN(result[key])){
-              console.log(key)
-              res = 0
-            }else
-              res = result[key]
+          let message = `Positive avg: ${(result.positive/length).toFixed(2)}`
+          message += `/ Negative avg: ${(result.negative/length).toFixed(2)} <br/><br/>`
 
-            message += `${key} [${dec2bin(key)}]: ${((res * 100) / length).toFixed(2)} %<br/>`;
+          delete result['positive']
+          delete result['negative']
+          for( let key of Object.keys(result) ) {
+            let res = !Number.isNaN(result[key]) ? result[key] : 0
+
+            message += `${key} [${dec2bin(key)}]: ${res} - ${((res * 100) / length).toFixed(2)} % <br/>`
           }
           message += '<br/>iterations: ' + length;
           $('#result').append(message)
@@ -106,11 +118,13 @@
         }
         
         context = (new AudioMarkings()).context
-        receiver = new Receiver(() => console.log('Receiver ready'),
-          (err) => console.error(err),
-          context)
+        receiver = new Receiver(context, 
+          () => console.log('Receiver ready'),
+          (err) => console.error(err))
 
-        // receiver.onChangeMessage = (value) => {console.log(value)}
+        receiver.onChangeMessage = (value) => {console.log(value)}
+
+        console.log(receiver)
       })
     </script>
 
