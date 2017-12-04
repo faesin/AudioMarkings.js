@@ -81,7 +81,7 @@ Receiver.prototype.checkMessage = function() {
 
   //sometimes hight frequencies' intensity gets much lower than normal
   //so i'm preventing my reference negative frequency from getting lower than 'quiet' (-100db)
-  referenceIntensities[1] = Math.max(referenceIntensities[1], -100)
+  // referenceIntensities[1] = Math.max(referenceIntensities[1], -100)
 
   //decoding the message
   let bit, message = 0, differenceToPositive, differenceToNegative
